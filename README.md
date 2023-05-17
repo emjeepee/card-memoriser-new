@@ -68,3 +68,16 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+App component structure:
+
+App
+  ---TimesDisplay
+  ---CardArea
+          ---Card(s)
+  ---BottomBar
+          ---Timer
+          ---ButtonOne ("Next card")
+          ---ButtonOne ("New deck")
