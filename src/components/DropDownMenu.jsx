@@ -39,7 +39,8 @@ i)   text, which has a value that is a
 ii)  src, which has a value that is the src
      of an image.
 
-Properties text and src may have value null.
+If property text is null, the value of property src must be a reference to an image.
+If property src is null, the value of property text must be a string.
 
 3) object optionsObject, an object that 
 contains data on which css classes the 
@@ -50,19 +51,20 @@ optionsObject looks like this:
   {
     textCSSclass: "dropdownMenuOptionText", // css class for the <p> of each option
     imgCSSclass: null,                      // css class for the img of an option
-    imageDivCSSclass: null,                 // css class for the div contianing the img
+    imageDivCSSclass: null,                 // css class for the div containing the img
     textDivCSSclass: "menuItemContainer",   // css class for the div containing the text
     imageAndTextDivCSSclass: null,          // css class for the div containing text+image    
     outerContainerCSSclass: "ddMenuOuterContainer", // css class for the div that grows/shrinks 
     ulClass: "dropDownMenu",                // css class for the ul of the dropdown
-    mainText: "Card",                       // the string text of the dd before clicking on it 
-    mainTextCSSclass: "yyyy"                // css class for <p> of string mainText
+    mainText: "Card" or "Suit"             // the string text of the dd heading 
+    mainTextCSSclass: "yyyy"                // css class for <p> of string mainText (the heading)
     mainTextContainerCSSclass: "xxxx"       // css class for the div containing mainText
-    clickHandlerOne: setCard,               // three click handlers
+    clickHandlerOne: xxxxxxxxx              // three click handlers
     clickHandlerTwo: null,
     clickHandlerThree: null
   }
 
+  4) dataVar, which ...
 
 
 
@@ -144,7 +146,7 @@ function  changeHeader(optionText){
   // 3): NOTE THIS IS NECESSARY
   ddMenuContainer.current.scroll(0,0)
   // Without the line above a problem occurs.
-  // When you scoll the (cards) dd menu down 
+  // When you scroll the (cards) dd menu down 
   // and select, say, "Jack" what appears in 
   // the dd menu header is the option that 
   // travelled up there when you scrolled down,
@@ -152,12 +154,13 @@ function  changeHeader(optionText){
                                   }
 
 
-
+// Make an array, each member of which 
+// is jsx for an <li> of the dropdown.
 // Below clickHandlerOne is function changeRectsAndDDMenus
 // of <CardsContainer/>. Its three args are:
-// card (a string for the card, eg "cJ")
-// suit (a string for the suit, eg "hearts")
-// car number (the index of the card in the pack)
+// card (a string for the card, eg "J", or null)
+// suit (a string for the suit, eg "hearts", or null)
+// card number (the index of the card in the pack)
 let menuOptionsArray
 
 if (type === "text") {
@@ -179,7 +182,7 @@ if (type === "text") {
                             )
                  )
                          )
-                     }
+                     } // end if it's a dd that contains only text
 
 
 
@@ -225,19 +228,30 @@ if (type === "textAndImage") {
 */  
 
 // The onClick handler for the div that 
-// contains the mainText <p>. This function
-// simply toggles the value of var
-// expandOrContract:
+// contains the mainText <p> (ie the dd menu heading),
+// which the user clicks to make the dd menu appear or disappear
+// This function simply toggles the value of state property
+// expandOrContract when the user clicks 
+// the menu heading:
 function expandOrContractDDmenu(){
-    // console.log(`you clicked! the Card or Suit div!`)
-    setExpandOrContract(!expandOrContract)
+  switch (expandOrContract) {
+    case 0:
+    setExpandOrContract(1);
+      break;
+    case 1:
+    setExpandOrContract(2)  
+      break;
+    case 2:
+    setExpandOrContract(1)  
+      break;
+                            }  
                                  }
 
 // A state property containing a boolean that will determine
 // whether the dd menu expands or contracts. 
 // The onClick handler for the mainText containing 
 // div toggles the value of this state property:
-const [expandOrContract, setExpandOrContract] = useState(false)
+const [expandOrContract, setExpandOrContract] = useState(0)
 
 
 
@@ -246,9 +260,20 @@ const [expandOrContract, setExpandOrContract] = useState(false)
 
 return (
 
-<div className={optionsObject.ddMenuPositionCSSclass}>
-  {/*The following div takes on one of two styles, one to expand it, the other to shrink it */}
-<div ref={ddMenuContainer} className = {expandOrContract ? " showDDmenu ddMenuOuterContainer " : " hideDDmenu ddMenuOuterContainer " }>
+<div className={optionsObject.ddMenuPositionCSSclass}> {/* An outer div to contain the dd menu and position it */}
+  {/* This div contains the dd menu heading and the div that contains the 
+      dd menu options. This is the div whose height is made to grow or shrink
+      to make the dd menu drop or climb.
+      The handler for the onClick of the div for the dd menu heading makes this div
+      grow or shrink by toggling the value of expandOrContract, which gives this div 
+      one of two styles, one to expand it, the other to shrink it.
+       */}
+{/*  <div ref={ddMenuContainer} className = {expandOrContract ? " showDDmenu ddMenuOuterContainer " : " hideDDmenu ddMenuOuterContainer " }> */}
+{/* <div ref={ddMenuContainer} className = {expandOrContract ? "  ddMenuOuterContainer " : "  ddMenuOuterContainer " }> */}
+<div ref={ddMenuContainer} className = {(expandOrContract===0) ? "  ddMenuOuterContainer neitherDDmenu" : 
+(expandOrContract===1) ? "ddMenuOuterContainer showDDmenu" : (expandOrContract===2) ? "ddMenuOuterContainer hideDDmenu" : "ddMenuOuterContainer"
+}
+> 
   {/*The following div contains text for the menu header*/}
 <div 
 className={optionsObject.mainTextContainerCSSclass}

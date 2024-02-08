@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, createContext, useRef } from "react";
-import * as ReactDOM from 'react-dom';
+
 // Sass styles:
 import '../scss/style.scss';
 
@@ -7,9 +7,14 @@ import '../scss/style.scss';
 import ButtonOne from  './ButtonOne.js';
 import Timer from  './Timer.jsx';
 import DropDownMenu from  './DropDownMenu.jsx';
+import Modal from  './Modal.jsx';
+
+
+// Context:
+import {KeyMemImageTextsContext} from './App.js'
+
 
 // images (lots!):
-
 import turnCardSymbol from  '../images/turnCardSymbol.svg';
 
 // For the suits DD menu:
@@ -86,15 +91,13 @@ import dontKnow from  '../images/dontKnow.svg';
 
 
 
+
 ////////////////////////////////////////////////////////////
 // HOW THIS COMPONENT FUNCTIONS
 /* 
 
 THE MEMORISATION STAGE
 ======================
-
-This is when the user asks for a new shuffled deck and turns over a 
-card one at a time, memorising each.
 
 State property stateDeckToDisplay will hold an array of 52 arrays, 
 each representing a card of a playing deck and looking like
@@ -432,9 +435,157 @@ const suitsOptionsList   = useRef(
   ]
                                  )
 
+//----------------------------------------------------------
+// The object that App passes to this component as 
+// context. The object contains setters for boolean
+// state properties of <App/> that conditionally 
+// render each table of cards and their key memory
+// image texts:  
+const cardsKeyImageTextsObject = useContext(KeyMemImageTextsContext)
+
+
+//----------------------------------------------------------
+// A ref to hold the counter.
+// The click handler for the Next card button
+// increments this counter with every click
+// of that button.
+// The value of this counter is 
+// (card the user wants to see)-1,
+// eg if the user clicks First card 
+// the value of this counter is 0.
+// If nextCardCounter === 13 then
+// the user has asked to see card 14
+// (ie has clicked the Next card 
+// button to see the 14th card):
+const nextCardCounter = useRef(-1);
+
+// a function to increment the value of the counter:
+function incrementCounter(){
+nextCardCounter.current += 1
+                           }
+
+//-----------------------------------------------------------------
+
+// A state property to do with the modal.
+// This component passes this in to
+// <Modal/> as props.
+// REMEMBER: React docs say that any state property
+// that is an object must be treated as read only,
+// ie to change one property you have to relpace the 
+// whole object! use spread operator to change only 
+// one properry of many (use many times to deal with 
+// nested objects because spread operator does a 
+// shallow copy). 
+
+const [modalObject, setModalObject] = useState(
+  {
+    showModal: false,  // OK and Cancel buttons in <Modal> set this to false (to dismiss the modal)
+                       
+    messageText: "",   // The text that will appar in the modal. 
+                       
+    showOrNot: false,  // true -> show the modal, false -> hide the modal. 
+                       
+    selfDismiss: true, // true -> make modal vanish after a fews seconds, false -> user has to dimiss modal
+                       
+    whichModalButtonClicked: null, // The OK and Cancel buttons in <Modal/> set this to "OK" or "Cancel"                   
+  }
+                                              )
+//----------------------------------------------------------
+// A state property that is a boolean that 
+// code sets when it wants to put a blocking screen 
+// over the timer:
+const [blockScreen, setBlockScreen] = useState(true)
 
 
 
+
+
+//----------------------------------------------------------
+// A ref that will hold three data
+// in the form of strings:
+// i)   the date of the attempt
+// ii)  the time of the attempt
+// iii) the time taken to memorise the cards.
+// The onClick handler of the Check button
+// reads this data and passes it on to 
+// component <App/>, which  makes the table 
+// out of it:
+const timeDateTimeTaken = useRef(
+{
+data: "",
+time: "",
+timeTaken: "",
+}
+                                )
+
+
+// A function that this component uses in 
+// checkCards() to set ref timeDateTimeTaken.
+// Each arg is a string:
+function setTimeAndDate(time, date){
+  // console.log(`In setTimeDateTimeTaken`)
+  timeDateTimeTaken.current.date = date
+  timeDateTimeTaken.current.time = time
+                                  }
+
+
+// A function that this component passes in
+// to <Timer/> to set ref timeDateTimeTaken.
+// The arg is a string:
+function setTimeTaken(timeTaken){
+  // console.log(`In setTimeTaken`)
+  timeDateTimeTaken.current.timeTaken = timeTaken
+                                }
+
+
+
+
+// A function to make two strings:
+// i)   one for the time of day
+// ii)  one for the date:
+function makeTimeAndDateString(){
+  
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const dates = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"]
+
+  const d = new Date();
+  let year = d.getFullYear();
+  year = year.toString()
+  if (year.startsWith('20')) {
+    year = year.replace("20", '');  
+                             }
+  let month = months[d.getMonth()];
+  let date = dates[d.getDate()];
+  let day = days[d.getDay()]; // eg "Monday"
+  let hours = d.getHours()
+  let minutes = d.getMinutes();
+
+  let timeString = hours + "h" + ":" + minutes + "m" 
+  // eg "13h:08m"
+  let dateString = day + " " + date + month + year 
+  // eg Mo 08May2023
+
+  return {currentTimeString: timeString, dateString: dateString}
+                            } // end fn makeTimeAndDateString
+
+
+
+// A state property that this component passes in to
+// <Timer/> as props. The onClick handler for the 
+// New deck button calls increments this state 
+// property, causing a useEffect in <Timer/> to 
+// run that calls a function that resets te timer:
+
+const [resetTimer, setResetTimer] = useState(0)
+
+// TESTING ONLY:
+useEffect(() => {
+  // console.log(`In useEffect of <CardsContainer/> and resetTimer has changed`)    
+              }, [resetTimer]);
+
+
+//----------------------------------------------------------------------------
 
 // A utility function to make up the
 // members of array lookupTable.current:
@@ -452,6 +603,14 @@ return deepCopyArray(tempArray)
 // the click handlers of the dd menu
 // options call. 
 const lookupTable = useRef(makeLookupTable())
+
+// A function to reset ref lookupTable.
+// The onClick handler for the Recall
+// button (recallCards) calls this function:
+function resetLookupTable(){
+lookupTable.current = makeLookupTable()
+                           }
+
 
 
 
@@ -528,25 +687,71 @@ const suitsOptObj = useRef(
   }
                         )
 
-// A ref related to the one above:
-const copiedSuitsOptObj = useRef()
+
+// Ref that contains info for the 
+// <DropDownMenu/>'s prop optionsObject
+// in the case of the suits dropdown
+// menu: 
+const cardsAreaSuitsOptObj = useRef(
+  { 
+    ddMenuPositionCSSclass: "ddPositionDiv",
+    textCSSclass: null,
+    imgCSSclass: "suitImg",
+    imageDivCSSclass: "menuItemContainer",
+    textDivCSSclass: null,
+    imageAndTextDivCSSclass: null,
+    outerContainerCSSclass: "ddMenuOuterContainer",
+    ulClass: "ulForDDownMenu",
+    mainText: "Suit",
+    mainTextCSSclass: "optionTextCSSclass", 
+    mainTextContainerCSSclass: "menuHeaderContainer",
+    clickHandlerOne: showCardKeyMemImages,
+    clickHandlerTwo: null,
+    clickHandlerThree: null
+  }
+                        )
+
+
 
 
 //----------------------------------------------------
 
-// a ref that will store the time that the user 
-// took to memorise the deck. Function logTime,
-// which this component passes in to <Timer/>
-// sets this ref.
-const userTime = useRef("")
 
-// A function that is passed in as props to 
-// <Timer/>. When <Timer/> calls this function 
-// it feeds it a string of the time the user 
-// took to memorise a deck:
-function logTime(timeString){
-  userTime.current = timeString
-                            }
+
+
+
+//----------------------------------------------------
+// A state property to hold an object that determines
+// properties of the <ButtonOne/> component that is
+// the Start/Stop button (a child of <Timer/>).
+// Code in this comnponent changes the value of this
+// state property, which gets passed in to <Timer/>
+// a props:
+let startStopButtonInfoObj = 
+{
+  buttonDivCSSclass: "mainButtonInoperable" ,
+  pTextCSSclass: "mainButtonText" ,
+  clickHandler: null,
+  pText: "Start" 
+}
+
+const [startStopButtonInfo, setStartStopButtonInfo] = useState(startStopButtonInfoObj) 
+
+// A function that makes the Start/Stop button inoperable
+function makeStartStopButtonInoperable(){
+  setStartStopButtonInfo(
+{
+  buttonDivCSSclass: "mainButtonInoperable" ,
+  pTextCSSclass: "mainButtonText" ,
+  clickHandler: null,
+  pText: "---" 
+}
+
+                        )
+                                        }
+
+
+
 
 //----------------------------------------------------
    
@@ -570,14 +775,18 @@ const whatToShowInGrid = useRef(0)
 
 
 // A state property that will contain an array whose members
-// each comprise jsx for a div that contains two dd menus. 
+// each comprise jsx that describes: a div containing two 
+// things:
+// i)   the image of the back of a card
+// ii)  two dd menus (one for selecting card number, the 
+//      other for selecting card suit) 
 // When the user clicks the Recall button, rectsAndDDMenus 
 // gets put into the grid (ie the div of 
 // className="cardsContainer"):
 const [rectsAndDDMenus, setRectsAndDDMenus] = useState()
 
 // A ref that the click handlers for the dd menus 
-// in the rects changes. This holds an array that 
+// on the backs of cards change. This holds an array that 
 // the click handler for the Recall button will 
 // put into state property rectsAndDDMenus, triggering
 // a rerender. The line below intialises this ref to
@@ -605,22 +814,164 @@ function redrawRectsAndDDMenus(){
 
 //---------------------------------------------------------------------------
 
+// Code surrounding the Recall button
+//-----------------------------------
+
+// A function called by function recallCards
+// (the onClick handler for the Recall button).
+// This function determines how many cards the
+// user has overturned and 
+// 1) if no cards, make self-dismissing modal show 
+//    with an appropriate message
+// 2) if 1-51 cards make non-self-dismissing modal 
+//    show with appropriate message
+// 3) if the user has memorised the whole deck
+//    DO NOT show the modal. Simply return "Whole deck"
+function displayModal(numberOfCardsMinusOne){
+  // Remember that no cards overturned means numberOfCardsMinusOne = -1
+  // 1): 
+  if (numberOfCardsMinusOne === -1 ) {  // user has not overturned any cards yet
+    setModalObject(
+      { ...modalObject,
+        messageText: "You must turn over a card before you can go to the recall stage", 
+        showOrNot: true, 
+        selfDismiss: true, 
+      }
+                  )
+      return ("Zero cards")
+                                     }  // end first if
+
+// 2):
+if (numberOfCardsMinusOne > -1 && numberOfCardsMinusOne <51) {  // user has overturnd 1-51 cards
+  if (numberOfCardsMinusOne === 0) {
+    setModalObject(
+      { ...modalObject,
+        messageText: `You have turned over only one card. Continue to the recall stage anyway?`, 
+        showOrNot: true, 
+        selfDismiss: false,
+      }
+                  ) 
+                  return ("Less than a deck") 
+                                   }
+
+  if (numberOfCardsMinusOne > 0 ) {
+    setModalObject(
+      { ...modalObject,
+        messageText: `You have turned over only ${numberOfCardsMinusOne +1 } cards. Continue to the recall area anyway?`, 
+        showOrNot: true, 
+        selfDismiss: false,
+      }
+                  )
+                return ("Less than a deck")                 
+                                  }       
+                                                                 } // end second if
+
+if (numberOfCardsMinusOne === 51 ) { // user has memorised all 52 cards
+  return ("Whole deck")                   
+                                   } // end third if
+                                              } // end displayModal()
+
+
+
+
 // The click handler for the Recall button.
 // This fn has to:
-// 1) Stop the clock if it's running
-// 1) save the time
-// 1) Change the start/stop button text to "---"
-// 1) Change the reset button text to "---" 
-// 1) Make Next card button inoperable
-// 1) Remove all cards from the grid
-// 2) Put in place 52 rects, each containing 
-// a dd menu for card and a dd menu for suit
-// but no image
-// 3) Make the Recall button faded and inoperable
+// 6) Put the blocking screen in front of <Timer/>, to 
+//    prevent the user from using the timer.
+// 5) Reset ref recallCardsToDisplay to an array of 52 members,
+//    each JSX representing a card back and the two dropdowns. 
+//    Here read the number of cards the user attempted and for 
+//    the remaining cards add a black 0.7 opacity screen to make
+//    the remaining cards' dds unusable.
+//    Also reset ref lookupTable. 
+// 1) Stop the timer
+// 2) Record the timer time, save to ref xxxx
+// 3) Record current time and date, save to ref xxxx
+// 4) Find out how many cards the user has overturned
+//    and:
+//    i)   if 0 show the self-dismissing modal with appropriate message;
+//         while the message is showing, stop the clock, and fade and
+//         make inoperable the Next card and New deck buttons. Once the
+//         modal has gone away make those buttons operable again and 
+//         restart the clock from where it left off.
+//    ii)  If >0 and <52 show the user-dismissable modal with 
+//    the appropriate message. The modal must two buttons:
+//        a) Cancel
+//           Clicking this causes the modal to disappear.
+//        b) Continue
+//           Clicking this causes the modal to disappear and 
+//                                                         
+//    iii)  If 52 carry on 
+// 
 function recallCards(){
-  // 1) 
+// 6):
+setBlockScreen(true)   
+// 5):
+toastRecallCardsToDisplay()
+recallCardsToDisplay.current= makeRectsAndDDMenus()
+resetLookupTable()
+// 1):
 stopTimerTrigger.current += 1
+
+// 2):
+
+
+// 3): 
+// let timeAndDateObject = makeTimeAndDateString()
+//  {currentTimeString: timeString, dateString: dateString}
+
+  // 4):
+// modalResult below will have one of three values:
+// ii) "Less than a deck", when the user has overturned 1-51
+//    cards. This is when code must show the modal with 
+//    buttons "OK" and "Cancel". 
+
+// i) "Zero cards", when the user has not overturned any 
+//    cards (and obviously mistakenly clicked button "Recall").
+//    Here the se;f-dosmissing modal shows.
+
+// iii) "Whole deck", when the user has overturned all 52 cards.
+//    Here code must stop the timer and take the user to the recall stage:
+
+// displayModal shows the appropriate modal
+let modalResult = displayModal(nextCardCounter.current)
+if (modalResult === "Whole deck") {
+  stopTimerTrigger.current += 1  
+  respondToModalOK()  
+                                  }
+
+                      } // end recallCards
+
+
+// A function that responds to the click of the Cancel button
+// of the modal. This component passes this function in to 
+// <Modal/> as props. This function 
+// 1) restarts the timer
+// 2) removes the blocking screen in front of <Timer/>:
+function respondToModalCancel() {
+// 2):
+setBlockScreen(false)
+  // 1): 
+  startTimerTrigger.current += 1
+                                }
+
+
+// A function that responds to the click of the OK button
+// of the modal. This component passes this function in to 
+// <Modal/> as props:
+// 2) Make Next card button inoperable
+// 3) Make <Timer/>'s Stop/Start button change its
+//    text to "---" and make it inoperable
+// 4) Make the Recall button faded and inoperable
+// 5) Show the backs of cards + dd menus 
+// 6) Put 52 divs on the baize, each containing: 
+// i)   the dd menu for card number and the dd menu for suit
+// ii)  an img, initially for the back of a card, later for its face 
+function respondToModalOK() {    
   // 1):
+  // a):
+
+  // 2):
   setNextCardButtInfo(
     {
       buttonDivCSSclass: "mainButtonInoperable" ,
@@ -628,36 +979,58 @@ stopTimerTrigger.current += 1
       clickHandler: showNextCard ,
       pText: "---" 
     }                )
-  // 1): 
-  whatToShowInGrid.current = 2
-  // 2):
-  redrawRectsAndDDMenus()
 
-  // 3):
+  // 3) 
+
+
+  // 4):
   setRecallButtInfo (
     {
       buttonDivCSSclass: "mainButtonInoperable" ,
       pTextCSSclass: "mainButtonText" ,
-      clickHandler: recallCards,
+      clickHandler: null,
       pText: "Recall" 
-    })
-                      } // end recallCards
+    }
+                    )
+
+  // 5): 
+  whatToShowInGrid.current = 2
+  // 6):
+  redrawRectsAndDDMenus()
+                                  }
+  
+
+
+
   
 //---------------------------------------------------------------------------
 
 // A function to create the array that will go into state 
-// property rectsAndDDMenus. The array members will each be the 
-// same jsx, which will describe the rect and two dd menus
-// (but no <img/>)
-// that the user will employ in the recall stage:
+// property rectsAndDDMenus. 
+// Each members will contain the same jsx, which will
+// describe a card, face down, with two dd menus superimposed 
+// on it. Additionally if the user has attempted to memorise 
+// the first n cards, where n < 52, the array members from 
+// n+1 to 52 (from indexes n to 51) will also include jsx for
+// a div of black background and opacity 0.7 that sits above
+// the jsx for the dds and the card back and prevents the user 
+// from using the dds:
 function makeRectsAndDDMenus(){
 let tempArray = []
 for (let i = 0; i < 52; i++) {
   tempArray.push(
     (
-<div className="testDivOne" key={i}> 
-        <img className="recallCard" src = {boc}/>
+<div className="containerForBackOfCard" key={i}> 
+        {/* An overlay screen that blocks the 
+        the back of the card abd the dds for 
+        cards (n+1) to 52, where the user has
+        attempted to memorise n cards (n being 
+        less than 52 and having value 
+        nextCardCounter.current +1) : */}
+        <div className={(i > nextCardCounter.current) ? "recall-card-blocking-screen" : null }></div>
 
+        {/*The back of a card: */}
+        <img className="recallCard" src = {boc}/>
 
         {/*The cards dropdown menu: */}
          <DropDownMenu 
@@ -686,9 +1059,15 @@ return tempArray
 
 // The click handler for the options of the dd menus. 
 // This function changes array 
-// recallCardsToDisplay.current, which will contain/contains 
-// the cards the user thinks are in the shuffled deck (ie 
-// the 52 recalled cards).
+// recallCardsToDisplay.current so that instead of 
+// having 52 identical members that each contain 
+// jsx for a back of a card and the two dds, instead 
+// it will contain 52 members, each containing jsx that 
+// describes one of two things:
+// i)   a card back and the two dds
+// ii)  a card front and the two dds. The card front
+//      corresponds to the user's selection from the
+//      dds. 
 // This function must
 // 1) Set the image of the appropriate rect div in 
 // array recallCardsToDisplay according to the user's 
@@ -699,24 +1078,34 @@ return tempArray
 // recallCardsToDisplay.
 // 4) Save the name of the src in an indexed array that 
 // the Check button handler will read.
-// Args card and suit are strings and cardNumber is an int:
+// 5) Make the Check button operable if the user has selected 
+// both card and suit of at tleast one card.
+// Args card and suit are strings and cardNumber is an int.
+// Args card and suit are strings or null:
 function changeRectsAndDDMenus(card, suit, cardNumber){
 // 1):
-// remember that lookupTable.current looks like this:
-// [{card: null, suit: null}, {card: null, suit: null} ... \50 more\  ]
+// remember that lookupTable.current is an array that 
+// looks like this:
+// [
+//  {card: null, suit: null}, 
+//  {card: null, suit: null} 
+//  ... \50 more\  
+// ]
+// So the code below looks for the array member of 
+// index [cardNumber] and sets it card and suit properties
+// to a card string and a suit string, respectively.
 
 let joinedSRCstring = null
 
 if (card) {
-  // console.log(`Inside changeRectsAndDDMenus and card is ${card}`)
-  lookupTable.current[cardNumber].card = card
+  lookupTable.current[cardNumber].card = card // eg "J"
           }
 
 if (suit) {
-  // console.log(`Inside changeRectsAndDDMenus and card is ${suit}`)
-  lookupTable.current[cardNumber].suit = suit
+  lookupTable.current[cardNumber].suit = suit // eg "c"
           }
 
+// set joinedSRCstring to, eg, "cJ", for jack of clubs:
 if (lookupTable.current[cardNumber].suit && lookupTable.current[cardNumber].card) {
   joinedSRCstring = lookupTable.current[cardNumber].suit.concat(
     lookupTable.current[cardNumber].card
@@ -725,7 +1114,7 @@ if (lookupTable.current[cardNumber].suit && lookupTable.current[cardNumber].card
 // 3):
   recallCardsToDisplay.current[cardNumber] =
   (
-    <div className="testDivOne" key={cardNumber}>
+    <div className="recallCardIMGandDDmenusContainer" key={cardNumber}>
     <img
     className="recallCard"
     src = {srcLookup.current[joinedSRCstring]}
@@ -753,9 +1142,30 @@ if (lookupTable.current[cardNumber].suit && lookupTable.current[cardNumber].card
 // look like this: {ordinal: i, card: null}
 // memorisedCards.current[cardNumber].card = joinedSRCstring
 memorisedCards.current[cardNumber].card = srcLookup.current[joinedSRCstring ]
+
+// 5):
+if (checkButtInfo.buttonDivCSSclass === "mainButtonInoperable") {
+  setCheckButtInfo(
+    {...checkButtInfo, buttonDivCSSclass: "mainButton" }
+                  )
+               }
+
                                                                                 } // end if
   redrawRectsAndDDMenus()
                                                       }
+
+
+
+// Now a function that the Recall button's onClick handler 
+// (recallCards) calls to toast the array that contains 
+// 52 members, each representing the back/front of a card
+// and the two dds:
+function toastRecallCardsToDisplay(){
+  recallCardsToDisplay.current = []
+                                    }
+
+
+
 
 //---------------------------------------------------------------------------------------
 
@@ -765,27 +1175,39 @@ memorisedCards.current[cardNumber].card = srcLookup.current[joinedSRCstring ]
 // info for the Recall button:
   const [recallButtInfo, setRecallButtInfo] =  useState(
     {
-      buttonDivCSSclass: "mainButton" ,
+      buttonDivCSSclass: "mainButtonInoperable" ,
       pTextCSSclass: "mainButtonText" ,
-      clickHandler: recallCards,
+      // clickHandler: recallCards,
       pText: "Recall" 
     }
-                                                    )
+                                                      )
+
+
+// state property that contains info
+// for <Timer/>'s Start/Stop button:
+const [startStopButtInfo, setStartStopButtInfo] =  useState(
+  {
+    buttonDivCSSclass: "mainButtonInoperable" ,
+    pTextCSSclass: "mainButtonText" ,
+    // clickHandler: recallCards,
+    pText: "---" 
+  }
+                                                           )
+
+
+
 
 
 // state property that contains 
 // info for the Check button:
 const [checkButtInfo, setCheckButtInfo] =  useState(
   {
-    buttonDivCSSclass: "mainButton" ,
+    buttonDivCSSclass: "mainButtonInoperable" ,
     pTextCSSclass: "mainButtonText" ,
     clickHandler: checkCards,
     pText: "Check" 
   }
                                                   )
-
-
-
 
 
 
@@ -915,36 +1337,48 @@ const checkArray = useRef([])
 
 // The click handler for the Check button.
 // This handler should 
-// 1)   Show a modal that asks the user whether he wants to 
-//      check the cards or not -- TO DO!
-// 2)   If user selects no, simply make the modal disappear
-//      and exit the handler   -- TO DO!              
-// 3)   If the user selects yes, do the following:
+
 // 4)   Read the memorised cards
-// 4)   Compare the memorised cards with those in 
+//      Compare the memorised cards with those in 
 //      shuffledDeck.current and in the grid show an
 //      overlying semi-transparent green tick/red cross 
 //      for the card in question.
 // 5)   grab the data about number of cards recalled 
-//      correctly/incorrectly/don't know, time, data and time taken and pass this
-//      info to <App/> (which will display it in <Table/>)
+//      correctly/incorrectly/don't know and the number
+//      of cards attempted
+//      Also grab the time taken, time and date (which the onClick 
+//      handler for <Timer/>'s Start/Stop button set when 
+//      the user clicked that button after having overturned
+//      the 52nd card) and send that data to <App/> to create 
+//      the table.
 // 6)   make the Check button inoperable
 
-function checkCards(){
-// 1):
 
+function checkCards(){
 // 4):
 // memorisedCards.current is an array that contains 52
-// members that each looks like this: 
+// members that each looks like this, each a representation
+// of a user's attempt at memorising a card: 
 // {status: null, card: cJ, ordinal: 45} .
-// The 52 members of shuffledDeck.current look like this:
+// The 52 members of shuffledDeck.current look like this,
+// each a card in the shuffled deck:
 // [boc, d8, 0, true, true, "d8"].
-// Now make array checkArray.current like this:
+// Now make array checkArray.current to contain 52 members, 
+// each containing jsx that is one of three types:
+// i)    jsx that describes a card face with an overlayed green tick
+//       (to indicate that the user's attempt at that card was correct)
+// ii)   jsx that describes a card face with an overlayed red cross
+//       (to indicate that the user's attempt at that card was incorrect)
+// iii)  jsx that describes a card back with an overlay of text "Don't know" 
+//       (to indicate that the user didn't attempt to recall that card)
+
+// First toast the old checkArray.current:
+checkArray.current = []
 
 for (let i = 0; i < 52; i++) {
   if (
     memorisedCards.current[i].card === shuffledDeck.current[i][1] 
-     ){
+     ){ // 4) i):
       memorisedCards.current[i].status = "correct"
       checkArray.current.push(
         <div className = "cardScene" key={i}>
@@ -957,11 +1391,11 @@ for (let i = 0; i < 52; i++) {
         </div>
                              )
       }
-if ( // if the card in memorisedCards.current does not match the one in shuffledDeck.current 
+if (  // if the card in memorisedCards.current does not match the one in shuffledDeck.current 
     memorisedCards.current[i].card !== shuffledDeck.current[i][1] 
-   ) { // The card in memorisedCards.current could be null or wrong:
+   ) { // The card in memorisedCards.current can be one of two things: null or wrong:
     // if the user did not remember the card at all (null):
-    if (
+    if (   // 4) iii):
       memorisedCards.current[i].card === null
        ) {
         memorisedCards.current[i].status = "dk" // don't know
@@ -976,7 +1410,8 @@ if ( // if the card in memorisedCards.current does not match the one in shuffled
           </div>
                                )
 
-         } else { // if the user recalled the card incorrectly (wrong):
+         } else {    // 4) ii):
+          // if the user recalled the card incorrectly (wrong):
 memorisedCards.current[i].status = "incorrect"
 checkArray.current.push(
   <div className = "cardScene" key={i}>
@@ -1016,23 +1451,26 @@ setStateCheckArray([...checkArray.current])
 // "objects cannot be children of components in 
 // React, try using an array instead"! WORK OUT WHY!!!!
 
+// 6):
+setCheckButtInfo(
+  {
+    buttonDivCSSclass: "mainButtonInoperable" ,
+    pTextCSSclass: "mainButtonText" ,
+    clickHandler: checkCards,
+    pText: "Check" 
+  }
+                )
+
 
 //5):
 // Passed-in prop setTimesAndScores is a function that takes one arg: 
-// an array of any number of members that looks like this:
-// [
-// {key: 0, time: "2hrs23mins19s", date: "4May23", scores: {correct: 45, incorrect: 5, dontKnow: 2}},
-// {key: 1, time: "1hrs52mins9s", date: "6May23", scores: {correct: 47, incorrect: 3, dontKnow: 2}},
-// {key: 2, time: "51mins10s", date: "14May23", scores: {correct: 49, incorrect: 1, dontKnow: 2}},
-// ...
-// ]
-// Now make that array.
+// an object that looks like this:
+// {key: 0, time: "2hrs23mins19s", date: "4May23", scores: {correct: 45, incorrect: 5, dontKnow: 2}}
 // Remember that memorisedCards.current contains 52 members that 
 // are like this:
-// i)   {status: null, card: null, ordinal: 45}         // user didn't recall
-// ii)  {status: "correct", card: "d2", ordinal: 46}    // user recalled correctly
-// iii) {status: "incorrect", card: "s9", ordinal: 47}  // user recalled incorrectly,
-let tableData = []
+// i)   {status: "dk", card: null, ordinal: 45}         // user didn't recall the card
+// ii)  {status: "correct", card: "d2", ordinal: 46}    // user recalled the card correctly
+// iii) {status: "incorrect", card: "s9", ordinal: 47}  // user recalled the card incorrectly,
 let numberOfCorrect = 0
 let numberOfIncorrect = 0
 let numberOfDontKnow = 0
@@ -1048,25 +1486,35 @@ if (memorisedCards.current[i].status === "incorrect") {
                                                       }
                               } // end for
 
-// fri12May23: currentTimeString holds the time now
-// but is not yet used. For that the table would have
-// to be wider!
-let {currentTimeString, dateString} = makeTimeAndDateString()
 
-tableData.push({key: 0, time: userTime.current, date: dateString, scores: {correct: numberOfCorrect, incorrect: numberOfIncorrect, dontKnow: numberOfDontKnow}})
+let timeAndDateObject = makeTimeAndDateString()
+// Set object in ref timeDateTimeTaken.current
+// (timeAndDateObject looks like this: {currentTimeString: timeString, dateString: dateString} )
+setTimeAndDate(timeAndDateObject.currentTimeString, timeAndDateObject.dateString)
 
-// 6):
-setCheckButtInfo(
-  {
-    buttonDivCSSclass: "mainButtonInoperable" ,
-    pTextCSSclass: "mainButtonText" ,
-    clickHandler: checkCards,
-    pText: "Check" 
-  }
-                )
+// Make an object that contains all of the info that
+// must go in the table. Code will pass this object
+// to <App/>, which add it to the existing data for 
+// the table and then pass that updated info to 
+// <Table/>, which will make the table out of the info:
+let tableRowData = {
+  key: null, 
+  numOfCardsAttempted: (nextCardCounter.current +1), 
+  timeTaken: timeDateTimeTaken.current.timeTaken, 
+  time: timeDateTimeTaken.current.time, 
+  date: timeDateTimeTaken.current.date, 
+  scores: { 
+            correct: numberOfCorrect, 
+            incorrect: numberOfIncorrect, 
+            dontKnow: numberOfDontKnow
+          }
+               }
 
+// send object tableRowData to <App/>, which will
+// add it to existing data and send the new data 
+// to <Table/>, which will display it in a table:
+setTimesAndScores(tableRowData)
 
-setTimesAndScores(tableData)
 
                      } // end checkCards
 
@@ -1116,18 +1564,22 @@ function makeTimeAndDateString(){
 // The click handler for the 
 // New deck button.
 // This function has to:
+// 0) make the screen that clocks the <Timer/>
+//    go away
 // 1) make a new shuffled deck and 
 // put it in ref shuffledDeck.current
 // 2) Enable the Next card button and 
 // set its text to First card
 // 3) set whatToShowInGrid.current to 1
-// 4) set stateDeckToDisplay to the new shuffled
+// 4) Enable the Recall button
+// 5) Stop the timer and reset it to 0:0:0
+// 6) set stateDeckToDisplay to the new shuffled
 // deck. This will cause a rerender and show
 // the cards in the grid (above the green felt)
 function makeNewShuffledDeckAndShowCardBacks(){
-// 1):
-// 
-
+// 0): 
+setBlockScreen(false)
+  // 1):
 makeAndStoreNewShuffledDeck()
 // ref shuffledDeck.current now contains 
 // a newly shuffled deck
@@ -1142,9 +1594,36 @@ setNextCardButtInfo(
 
 // 3):   
   whatToShowInGrid.current = 1
+
 // 4):
+// Remember that recallButtInfo looks like this:
+/*
+{
+  buttonDivCSSclass: "mainButtonInoperable" ,
+  pTextCSSclass: "mainButtonText" ,
+  // clickHandler: recallCards,
+  pText: "Recall" 
+}
+*/
+setRecallButtInfo(
+  {
+  ...recallButtInfo, buttonDivCSSclass: "mainButton"
+  }
+                   )
+
+// 5):
+// increment resetTimer, which is 
+// passed in as props to <Timer/>,
+// where every time resetTimer 
+// changes a useEffect runs that 
+// calles a <Timer/> function that 
+// resets the timer:
+setResetTimer(prevValue => prevValue +1)
+
+// 6):
 changeStateDeckToDisplay(shuffledDeck.current)
                                               }
+
 //-----------------------------------------------------------------
 
 // A ref to hold a trigger. this component passes the value of 
@@ -1166,22 +1645,9 @@ const stopTimerTrigger = useRef(0)
 
 //-----------------------------------------------------------------
 
-// A ref to hold the counter.
-// The click handler for the Next card button
-// increments this counter with every click
-// of that button:
-const nextCardCounter = useRef(-1);
 
-// a function to increment the value of the counter:
-function incrementCounter(){
-nextCardCounter.current += 1
-                           }
-
-//-----------------------------------------------------------------
-
-
-// The click handler for the Next card button
-// calls this function. This function must:
+// A function that the click handler for the Next card button
+// will call. This function must:
 // 2) Change the array in shuffledDeck.current
 //    that represents the card in question
 //    (which depends on the value of the counter)
@@ -1212,7 +1678,7 @@ if (nextCardCounter.current === 50) {
       pText: "Last card" 
     } 
                      )
-}
+                                    } // end if
 
 
 
@@ -1258,7 +1724,7 @@ if (nextCardCounter.current > 50) {
           clickHandler: showNextCard ,
           pText: "---" 
         }              )
-                            } // end if
+                                  } // end if
 
                               } // end changeDeckToDisplay
 
@@ -1267,14 +1733,14 @@ if (nextCardCounter.current > 50) {
 
 // The click handler for the Next card button.
 // This function must 
-// 1) // 1) Start the clock if it is not running,
-//    do nothng if it is
+// 1) Start the clock if it is not running,
+//    do nothing if it is
 // make the next card turn
 // by:
-// 2) incrementing the counter
-// 3) making appropriate changes to 
+// 2) increment the counter
+// 3) make appropriate changes to 
 //    deckToDisplay.current
-// 4) Setting state property stateDeckToDisplay to 
+// 4) Set state property stateDeckToDisplay to 
 //    deckToDisplay.current. This causes the re-render
 function showNextCard(){
 // 1) 
@@ -1285,6 +1751,7 @@ function showNextCard(){
 startTimerTrigger.current += 1 
   //2):
   incrementCounter()
+  // console.log(`In showNextCard and the counter has value ${nextCardCounter.current}`)
   // 3):  
   changeDeckToDisplay()
   // 4):
@@ -1379,8 +1846,46 @@ setStateDeckToDisplay (
                                           } // end changeStateDeckToDisplay
 
 
-//--------------------------------------------------------------------------------------------
 
+// A function to set the Recall button
+// so that it is operable. This component 
+// passes this function in to <Timer/> 
+// as props because simply passing in 
+// state setter setRecallButtInfo to 
+// <Timer/> didn't always set the 
+// onClick handler of hte Recall button:
+function makeRecallButtonOperable (){
+  setRecallButtInfo({...recallButtInfo, buttonDivCSSclass: "mainButton" })
+                                    }
+
+
+// The onClick handler for the options
+// of the cards area dd list. This function
+// has ultimately to show the window that 
+// holds the table of cards and their image 
+// texts (for a given suit).
+// This function 
+// 1) must take three args (because that's
+// how the dd is set up):
+// null, member.text and dataRef.current
+// but only do anything with the second 
+// (textArg, which is a string for the suit, 
+// "c", "d", "h" or "s"). The third arg 
+// will be null.
+// 2) change the appropriate state property
+//    of <App/> to make the window show. Do
+//    this by calling a function of <App/>
+//    that this component has acess to via 
+//    context (function showImageTextsTable):
+function showCardKeyMemImages(argOne, textArg, argThree){ // 1)
+// 2) 
+  cardsKeyImageTextsObject.showImageTextsTable(textArg)
+                                                        }
+
+
+//--------------------------------------------------------------------------------------------
+// RENDERING BEGINS
+//--------------------------------------------------------------------------------------------
 
 return (
 <div className="cardContainerAllEnclosingDiv">
@@ -1388,7 +1893,9 @@ return (
 {/*The div above contains two divs:
 
 1) div className="cardsContainer"
-This is a 13x4 grid
+This is a 13x4 grid that will contain
+the cards (the card backs, the card fronts,
+  the card backs plus dd menus) 
 
 2) div className= "cardsAreaButtonsAndTimerContainer"
     This contains two elements:
@@ -1398,12 +1905,12 @@ This is a 13x4 grid
 
 
 
-<div className="cardsContainer"> {/*A grid container*/}
+<div className="cardsContainer"> {/*This is the grid that contains four rows, each of 13 slots*/}
 
 {/*whatToShowInGrid.current can have these three values:
 1)  0   -> show nothing
-2)  1   -> show play cards (backs or faces) -- stateDeckToDisplay
-3)  2   -> show rects and the two dd menus -- rectsAndDDMenus
+2)  1   -> show play cards (backs or faces, depending on whether the user has overturned cards or not) -- stateDeckToDisplay
+3)  2   -> show rects (ie backs of cards) and the two dd menus -- rectsAndDDMenus
 4)  3   -> show the card plus green ticks/red crosses/"Don't know") -- stateCheckArray
 */}
 
@@ -1458,15 +1965,24 @@ pText = {newDeckButtInfo.pText}
 counter = {nextCardCounter.current}
 startTimerTrigger = {startTimerTrigger.current}
 stopTimerTrigger = {stopTimerTrigger.current}
-logTime={logTime}
+// makeStartStopButtonInoperableTrigger = {makeStartStopButtonInoperableTrigger}
+makeRecallButtonOperable = {makeRecallButtonOperable}
+// setTimeDateTimeTaken = {setTimeDateTimeTaken}
+setTimeTaken = {setTimeTaken}
+resetTimer = {resetTimer}
+blockScreen={blockScreen}
 />
 
+
+
+{/* The div containing the Recall and Check buttons:*/}
 <div className="cardsAreaCheckButtonContainer">
 {/* Recall button */}
 <ButtonOne 
 buttonDivCSSclass = {recallButtInfo.buttonDivCSSclass} 
 pTextCSSclass = {recallButtInfo.pTextCSSclass}  
-clickHandler = {recallButtInfo.clickHandler}  
+/*     clickHandler = {recallButtInfo.clickHandler}     */
+clickHandler = {recallCards}
 pText = {recallButtInfo.pText} 
 /> 
 
@@ -1478,14 +1994,52 @@ clickHandler = {checkButtInfo.clickHandler}
 pText = {checkButtInfo.pText} 
 /> 
 
+</div>
 
-
+{/* The div containing the dd 
+the user selects from to show 
+a window that displays a table 
+that contains the texts for
+card key memory images: */}
+<div className="cards-area-dd-container">
+{/*The suits dropdown menu: */}
+<p className="infoTextP">
+  Info
+</p>
+<DropDownMenu
+         optionsList = {suitsOptionsList.current}
+         optionsObject={cardsAreaSuitsOptObj.current}
+         dataVar = {null}
+         type = "image"
+/>
 </div>
 
 
 
-
 </div> {/* end div className= "cardsAreaButtonsAndTimerContainer" */}
+
+
+{/* Remember that nodalObject looks like this: 
+  {
+    messageText: "",   // The text that will appar in the modal. 
+                       // Passed in as props to <Modal/>
+    showOrNot: false,  // true -> show the modal, false -> hide the modal. 
+                       // Passed in as props to <Modal/>
+    selfDismiss: true, // true -> make modal vanish after a fews seconds, false -> user has to dimiss modal
+                       // Passed in as props to <Modal/>
+  }
+*/}
+
+
+{/* The modal, condionally rendered: */}
+<Modal
+messageText = {modalObject.messageText} 
+showOrNot = {modalObject.showOrNot}
+setModalObject = {setModalObject}
+selfDismiss = {modalObject.selfDismiss}
+respondToModalCancel = {respondToModalCancel}
+respondToModalOK = {respondToModalOK}
+/>
 
 
 

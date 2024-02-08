@@ -9,10 +9,8 @@ export default function ButtonOne({
     pTextCSSclass,
     clickHandler,
     pText
-                                    }) {
-
+                                  }) {
 return (
-
 <div 
 className= {buttonDivCSSclass}
 onClick = {clickHandler}
@@ -25,6 +23,5 @@ className = {pTextCSSclass}
 </p>
 
 </div>
-
-       )
-                                        }
+      )
+                                     }

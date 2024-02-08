@@ -4,7 +4,7 @@
 /* cute-font-regular - latin */
 @font-face {
     font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-    font-family: 'Cute Font';
+    font-family: Cute Font !important;
     font-style: normal;
     font-weight: 400;
     src: url('../fonts/cute-font-v20-latin-regular.eot'); /* IE9 Compat Modes */
@@ -22,7 +22,7 @@
 /* mitr-200 - latin_latin-ext */
 @font-face {
     font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-    font-family: 'Mitr';
+    font-family: Mitr !important;
     font-style: normal;
     font-weight: 200;
     src: url('../fonts/mitr-v11-latin_latin-ext-200.eot'); /* IE9 Compat Modes */
@@ -35,7 +35,7 @@
   /* mitr-300 - latin_latin-ext */
   @font-face {
     font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-    font-family: 'Mitr';
+    font-family: Mitr !important;
     font-style: normal;
     font-weight: 300;
     src: url('../fonts/mitr-v11-latin_latin-ext-300.eot'); /* IE9 Compat Modes */
@@ -48,7 +48,7 @@
   /* mitr-regular - latin_latin-ext */
   @font-face {
     font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-    font-family: 'Mitr';
+    font-family: Mitr !important;
     font-style: normal;
     font-weight: 400;
     src: url('../fonts/mitr-v11-latin_latin-ext-regular.eot'); /* IE9 Compat Modes */
@@ -61,7 +61,7 @@
   /* mitr-500 - latin_latin-ext */
   @font-face {
     font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-    font-family: 'Mitr';
+    font-family: Mitr !important;
     font-style: normal;
     font-weight: 500;
     src: url('../fonts/mitr-v11-latin_latin-ext-500.eot'); /* IE9 Compat Modes */
@@ -74,7 +74,7 @@
   /* mitr-600 - latin_latin-ext */
   @font-face {
     font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-    font-family: 'Mitr';
+    font-family: Mitr !important;
     font-style: normal;
     font-weight: 600;
     src: url('../fonts/mitr-v11-latin_latin-ext-600.eot'); /* IE9 Compat Modes */
@@ -87,7 +87,7 @@
   /* mitr-700 - latin_latin-ext */
   @font-face {
     font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-    font-family: 'Mitr';
+    font-family: Mitr !important;
     font-style: normal;
     font-weight: 700;
     src: url('../fonts/mitr-v11-latin_latin-ext-700.eot'); /* IE9 Compat Modes */
@@ -129,7 +129,7 @@ position: absolute;
 top: 0px;
 left: 0px;
 
-width: 1533px;
+width: 1733px;
 height: 1000px;
 
 margin: 0px;
@@ -193,7 +193,7 @@ flex-direction: column;
 justify-content: flex-start;
 align-items: center;
 
-width: 13%;
+width: 23%;
 height: 87%;
 
 /*
@@ -262,8 +262,104 @@ border-style: dotted;
 
                }
     
+//-------------------
+
+// styles for the modal:
 
 
+// The div that is semi-opaque
+// that sits on top of the whole 
+// field of view and on top of which 
+// the actual modal sits:
+
+.modal-Semi-Opaque-Div{
+  position: absolute;
+  
+  height:100%; // % of div of className cardContainerAllEnclosingDiv
+  width:100%;
+  
+  top: 00px;
+  left: 00px;
+  
+  // background-color: rgba(241, 159, 159, 0.1);
+  background-color: rgba(57, 57, 62, 0.6);
+
+  z-index: 99;
+                  }  
+
+
+
+
+
+// the div for the actual 
+// modal itself:
+.modalEnclosingDiv{
+position: absolute;
+top: 100px;
+left: 300px;
+
+width: 600px;
+height: 200px;
+
+background-color: #d294db;
+// box-shadow: 8px 8px 7px rgba(0, 0, 0, 1);
+box-shadow: 18px 18px 27px rgba(0, 0, 0, 0.75), 8px 8px 17px rgba(0, 0, 0, 1);
+
+border-radius: 15px;
+border: #8007f2 4px solid;
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: space-around;
+
+z-index: 100;
+                  }
+
+// The div that contains the 
+// <p> for the modal message 
+// text:
+.modal-Text-Container{
+width: 97%;
+height: 65%;
+
+border: #0404f1 1px dotted;
+
+padding: 5px;
+                     }
+
+
+// The <p> for the modal message:
+.modal-Message-Text{
+  font-family: 'Mitr';
+  font-style: normal;
+  font-weight: 200;
+  font-size: 36px;
+  line-height: 43px;
+
+  padding: 0px;
+  margin: 0px;
+
+
+            }
+
+
+// The div that contains the 
+// OK and Cancel buttons for 
+// the modal:
+.modal-Button-Container{
+  width: 97%;
+  height: 37%;
+  
+  border: #262636 1px dotted;
+
+  padding: 5px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+                       }
 
 
 
@@ -277,7 +373,7 @@ border-style: dotted;
 .appContainerThree{
 position: relative;
 
-width: 85%;
+width: 77%;
 height: 87%;
 
 /*
@@ -372,10 +468,10 @@ margin-bottom: 2px;
 
 z-index: 40;
 
-animation-name: rotateDropdownItems;
-animation-duration: 0.7s;
-animation-fill-mode: forwards;
-animation-timing-function: ease-in-out;
+// animation-name: rotateDropdownItems;
+// animation-duration: 2s;
+// animation-fill-mode: forwards;
+// animation-timing-function: ease-in-out;
                 }
 
 
@@ -426,6 +522,7 @@ animation-timing-function: ease-in-out;
 position: absolute;
 
 width: 100%;
+
 // height will be set as user
 // clicks on this div (ie by the animation);
 
@@ -495,12 +592,40 @@ border-color: rgb(17, 16, 16);
                          }
     
 
+// For the outer div of the dd 
+// in the cards container
+// (that the user clicks to show 
+// key memory imnges):
+.ddMenuForKeyMemoryImages{
+  position: relative;
+  width: 70px;
+  height: 60px;
+                         }
+
+
+// For the div that contains the 
+// two dd menus and the img of 
+// the recalled card:
+.recallCardIMGandDDmenusContainer{
+  position: relative; // This is essential. without it the img in this div overflows the div
+  align-self: stretch;
+                                 }
 
 
 
-// Two styles to apply conditionally to the 
+
+// Three styles to apply conditionally to the 
 // div that contains the dropdown list
 // options:
+
+// 0) To make the div neither grow nor shrink.
+// This style simply gives the div a height
+// equal to the height of one option (ie
+// the same as the height of the heading div:
+.neitherDDmenu{
+  height: 20px;
+              }
+
 
 // 1) to make the div
 // grow in height so that it shows all of the 
@@ -597,16 +722,220 @@ border-color: rgb(17, 16, 16);
 
 
 
+//-----------------------------------------------------------------------------
+// Styles for the <KeyImageText/>
+// component
+
+
+// The outer div
+.key-imagetext-outer-container{
+position: absolute;
+left: 1000px;
+top: 0px;
+
+width: 500px;
+height: 1000px;
+
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+
+
+border: #6e097d 4px solid;
+border-radius: 10px;
+
+background-color: #e1abf3;
+
+box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+z-index: 200;
+                              }
+
+
+// The 1x14 grid that contains 
+// the cards and their image texts:
+.imageTextsGridDiv{
+  width: 98%;
+  height: 98%;
+  
+  display: grid;
+      grid-template-rows: 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6%;
+      grid-template-columns: 97%;  
+      grid-column-gap: 2%;
+      grid-row-gap: 0.2%;
+
+border: #0404f1 1px solid;
+
+                  }
+
+// The div that contains everything that
+// goes in one row of the grid.
+// This div is itself a 1x3 grid and 
+// contains these things:
+// i)   the card div
+// ii)  the image text div
+// iii) the Change button div
+.imageTextsRowDiv{
+  border: #f259f2 1px solid;
+
+  display: grid;
+  grid-template-rows: 98%;
+  grid-template-columns: 32% 32% 32%;  
+  grid-column-gap: 1%;
+  grid-row-gap: 0.5%;
+
+
+                 } 
+
+
+
+// The divs that contains either 
+// i) "Card" or 
+// the card text
+// ii) "Image" or 
+// image text
+// iii) "Change" or 
+// the change button:
+.imageTextDivs{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  border: #e4929a;
+  border-width: 2px;
+  border-style: solid;
+
+  grid-column: span 1;
+  grid-row: span 1;
+
+  padding: 3px;
+
+       }
+
+// The div that contains the 
+// input and the OK button
+// for <KeyImageTextRow/>.
+// This div contains
+// i)   a div        
+.inputContainer{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  border: #e4929a;
+  border-width: 2px;
+  border-style: solid;
+
+  grid-column: span 2;
+  grid-row: span 1;
+
+  padding: 3px;
+              }
+
+// for the input:
+.keyImgTxtRowInput{
+width: 75%;
+height: 80%;
+                  }
+
+// THe <p> that goes in the 
+// div of class imageTextDivs:
+.imageTextP{
+  font-family: Mitr !important;
+  font-style: normal;
+  font-weight: 400;
+
+  font-size: 14px;
+  line-height: 15px;
+
+  padding: 0px;
+  margin: 0px;
+           } 
+
+.imageTextPhead{
+  font-family: Mitr !important;
+  font-style: normal;
+  font-weight: 400;
+
+  font-size: 25px;
+  line-height: 15px;
+
+  padding: 0px;
+  margin: 0px;
+                }
+
+// The div that goes at the top
+// of the window and contains 
+// "Suit:" and the image of the
+// suit:
+.suitImageContainerDiv{
+  position: relative;
+  width: 97%;
+  height: 8%;
+
+  border: #000000 1px solid;  
+                      }
+
+// The <p> that goes in the 
+// div of class suitImageContainerDiv
+// (along with the image of the 
+// suit) and is the suit text,
+// eg "Diamonds"
+.suitP{
+  position: absolute;
+top:5px;
+left: 20px;
+
+  font-family: Mitr !important;
+  font-style: normal;
+  font-weight: 700;
+
+  font-size: 45px;
+  line-height: 46px;
+
+  padding: 0px;
+  margin: 0px;
+    }
+
+// The img that contains
+// the image of the suit:
+.suitIMG{
+position: absolute;
+top:5px;
+right: 20px;
+
+height: 90%;
+width: 70px;
+        }
 
 
 
 
+// The div that positions the 
+// Close button:
+.close-button-positioning-div{
+width: 80px;
+height: 45px;
+
+border: #000000 1px solid;
+
+align-self: flex-end;
+                              }                              
 
 
 
+
+//-----------------------------------------------------------------------------
 
 // The outermost div of <CardContainer>:
 .cardContainerAllEnclosingDiv{
+position: absolute;
+top: 0px;
+left: 0px;
+
+
 width: 1325px;
 height: 100%;
 
@@ -619,9 +948,7 @@ height: 100%;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-
-
-}
+                            }
 
 
 // The div that contains the cards.
@@ -639,20 +966,17 @@ height: 100%;
     border-width: 6px;
     border-style: dotted;
 */
-    display: grid;
-    grid-template-rows: 23% 23% 23% 23%;
-    grid-template-columns: 6.7% 6.7% 6.7% 6.7% 6.7% 6.7% 6.7% 6.7% 6.7% 6.7% 6.7% 6.7% 6.7%;
-    grid-column-gap: 1%;
-    grid-row-gap: 2%;
-
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+    
 
                }
 
 
 
 // The div that contains the 
-// Next card and New deck buttons:                  
+// i)   the div containing the Next card and New deck buttons
+// ii)  the div containing the timer
+// iii) the div containing the Recall and Check buttons
+// iv)  the div containing the dd for the card key memory images  
 .cardsAreaButtonsAndTimerContainer{
 display: flex;
 flex-direction: row;
@@ -721,8 +1045,62 @@ padding-left: 20px;
                          }
 
 
-// A test div:
-.testDivOne{
+.cards-area-dd-container{
+  position: relative;
+  top: 15px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  
+  border-color: #7b0df1;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 55px;
+  
+  height: 30%;
+  width: 150px;
+
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+
+  margin-left: 20px;
+}
+
+// The <p> for the text
+// "Info":
+.infoTextP{
+
+  font-family: Mitr !important;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18px;
+  line-height: 19px;
+
+  margin: 0px;
+          }
+
+// To position the dd that goes
+// under text "Info":
+.ddPositionDiv{
+
+position: relative;
+top: -20px;
+
+width: 30px;
+
+}
+
+
+
+// There will be 52 of this div on the 
+// baize after the user clicks the 
+// Recall button.
+// This div contains:
+// i)   the img for a card (face or back)
+// ii)  the two dd lists where the user selects 
+//      card number and suit:
+.containerForBackOfCard{
     position: relative;
     top: 0px;
     left: 0px;
@@ -740,6 +1118,16 @@ padding-left: 20px;
             }
 
 
+
+.recall-card-blocking-screen{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+    width: 105%;
+    height: 105%;
+  z-index: 100;
+  background-color:  rgba(0, 0, 0, 0.6);
+                            }            
 
 
 
@@ -820,7 +1208,7 @@ padding-left: 20px;
                 }
     
 
-
+//--------------------------------------------------------------------------------------------------------------------
 
 
 // Styles to do with the 3D movement (the spin
@@ -872,11 +1260,14 @@ padding-left: 20px;
 position: absolute;
 top: 20px;
 left: 3px;
-width: 95%;
+max-width: 100%;
+max-height: 100%;
 
 box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+          }
 
-}
+
+
 
 .recallCardTest{
     position: absolute;
@@ -962,15 +1353,15 @@ border-style: dotted;
 
 
   thead th:nth-child(1) {
-    width: 25%;
+    width: 20%;
   }
  
   thead th:nth-child(2) {
-    width: 25%;
+    width: 20%;
   }
   
   thead th:nth-child(3) {
-    width: 10%;
+    width: 20%;
   }
   
   thead th:nth-child(4) {
@@ -978,11 +1369,18 @@ border-style: dotted;
   }
 
   thead th:nth-child(5) {
-    width: 30%;
+    width: 10%;
+  }
+  thead th:nth-child(6) {
+    width: 25%;
   }
 
+
+
+
+
 th {
-height: 15px;
+height: 19px;
 
 }
 
@@ -1022,8 +1420,8 @@ tbody tr:nth-child(odd) {
     font-family: 'Mitr';
     font-style: normal;
     font-weight: 200;
-    font-size: 10px;
-    line-height: 11px;
+    font-size: 14px;
+    line-height: 15px;
     text-align: center;
            }
 
@@ -1133,9 +1531,7 @@ tbody tr:nth-child(odd) {
             }
 
 //----------------------------------------------------
-
-// Styles for the Timer component:
-
+// Styles for <Timer/>:
 
 // For the all-enclosing div:
 .timerEnclosingDiv{
@@ -1162,6 +1558,18 @@ tbody tr:nth-child(odd) {
 
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
                   }
+
+// For the div that acts as a blocking screen:
+.timer-blocking-screen-div{
+position: absolute;
+top: 0px;
+left: 0px;
+  width: 100%;
+  height: 100%;
+z-index: 1;
+background-color:  rgba(0, 0, 0, 0.8);
+                          }
+
 
 // For the divs that enclose the 
 // timer texts:
@@ -1351,7 +1759,7 @@ border-style: dotted;
 
 //----------------------------------------------------
 
-// Styles to do with  component <RectAndDDMenu/>
+// Styles to do with component <RectAndDDMenu/>
 
 // The main rectangle in which the 
 // dd menus appear
