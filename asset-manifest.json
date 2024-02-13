@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/card-memoriser-new/static/css/main.fbe13486.css",
-    "main.js": "/card-memoriser-new/static/js/main.2fd87d8d.js",
+    "main.css": "/card-memoriser-new/static/css/main.12f4b005.css",
+    "main.js": "/card-memoriser-new/static/js/main.4f419b02.js",
     "static/js/592.9b6e934f.chunk.js": "/card-memoriser-new/static/js/592.9b6e934f.chunk.js",
     "static/media/greenFeltLowQual.jpg": "/card-memoriser-new/static/media/greenFeltLowQual.d92a9ac8daae7c23386f.jpg",
     "static/media/mitr-v11-latin_latin-ext-600.ttf": "/card-memoriser-new/static/media/mitr-v11-latin_latin-ext-600.9224af024a7b85760309.ttf",
@@ -101,12 +101,12 @@
     "static/media/greenTick.svg": "/card-memoriser-new/static/media/greenTick.cc4af97bb368993acde1c333440faefa.svg",
     "index.html": "/card-memoriser-new/index.html",
     "static/media/diamond.svg": "/card-memoriser-new/static/media/diamond.af367b3a206220d9a752df86465e5ce2.svg",
-    "main.fbe13486.css.map": "/card-memoriser-new/static/css/main.fbe13486.css.map",
-    "main.2fd87d8d.js.map": "/card-memoriser-new/static/js/main.2fd87d8d.js.map",
+    "main.12f4b005.css.map": "/card-memoriser-new/static/css/main.12f4b005.css.map",
+    "main.4f419b02.js.map": "/card-memoriser-new/static/js/main.4f419b02.js.map",
     "592.9b6e934f.chunk.js.map": "/card-memoriser-new/static/js/592.9b6e934f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.fbe13486.css",
-    "static/js/main.2fd87d8d.js"
+    "static/css/main.12f4b005.css",
+    "static/js/main.4f419b02.js"
   ]
 }
