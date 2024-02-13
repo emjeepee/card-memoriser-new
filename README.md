@@ -1,3 +1,57 @@
+# How this app works
+
+The user clicks the New deck button, which creates a new shuffled deck
+of cards. the app displays these cards face down on the green felt.
+The app makes visible each card in turn (starting from the top left) 
+as the user clicks the Next card button <br>
+The first click of the Next card button starts the timer. <br>
+The user memorises each card and, once all the cards have been overturned 
+and committed to memory, clicks the Stop timer button.<br>
+The user then clicks the Recall button, which places all of the cards
+face down again, but this time each card has two dropdown menus above it.<br>
+It's from these dropdowns that the user selects the card he thinks 
+belongs in that position. One dropdown is for suit, one for card face value
+(eg 6, queen, ace, 9) <br>
+The user can ignore cards if he does not remember them. <br>
+Once the user is satisfied he has recalled as many as he is able to he 
+clicks the Check button. <br>
+The Check button shows each card face up again but this time with a green 
+tick, a red cross or the text "Don't know" superimposed on its face to
+indicated, respectively, whether the user got the card right, got it 
+wrong or could not recall it.<br>
+The Check button also populates the table in the LH column with data
+about the memorisation attempt. The table displays date and time of attempt, 
+the numbers of ticks, crosses or don't knows, and the time taken to recall the deck 
+of cards.<br>
+
+
+# App component structure:<br>
+<br>
+App<br>
+  ---TimesDisplay<br>
+  ---CardArea<br>
+          ---Card(s)<br>
+  ---BottomBar<br>
+          ---Timer<br>
+          ---ButtonOne ("Next card")<br>
+          ---ButtonOne ("New deck")<br><br><br><br>
+
+
+
+
+
+
+  <br>
+    <br>
+      <br>
+        <br>
+          <br>
+            <br>
+              <br>
+                <br>
+                  <br>
+                  
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -71,13 +125,3 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 
 
-App component structure:
-
-App
-  ---TimesDisplay
-  ---CardArea
-          ---Card(s)
-  ---BottomBar
-          ---Timer
-          ---ButtonOne ("Next card")
-          ---ButtonOne ("New deck")

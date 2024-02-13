@@ -89,77 +89,40 @@ deckToDisplay.current[i][2] = false
 
 
 
+// ---------- ---------- ---------- ---------- ---------- ---------- ----------
 
-if (memberArray[3]){
-// change what's inside div of className "cardScene" to:
-<div className="cardBackImgContainerNoRotate" key={memberArray[1]}>  
-<img className = "cardImg" src={memberArray[1]}></img>
-</div>
+Tues 6 June 23:
+user clicks First card
+  start timer
+  make start/stop button opaque and opearable
+  make stop/start button read "Stop"
 
-but 
+User clicks Stop at any time
+  counter == 52 ? 
+                stop timer, record the elapsed time and time and date,
+                change text of start/stop button to "---" and make inoperable
+                :   
+                stop timer
 
-if (!memberArray[3]){
-// change what's inside div of className "cardScene" to:
-<div className = {memberArray[2] ? "cardNoRotate" : "cardRotate"}> 
-        <div className="cardFrontImgContainer" key={memberArray[1]}>
-          <img className = "cardImg" src={memberArray[0]}></img>
-        </div>
-        <div className="cardBackImgContainer" key={memberArray[1]}>
-        <img className = "cardImg" src={memberArray[1]}></img>
-        </div>
+User clicks Next card (I think this has been dealt with)
+  timer ticking ?
+                do nothing
+                :
+                start timer
 
-*/}
+User clicks Next card for 52nd time
+  Next card button onClick handler sends a messageto 
+  <Timer/>. 
 
-{/* a) */}
-{/* b) */}
-{stateDeckToDisplay.map((memberArray)=>(
-  memberArray[3] ? {/* simply show the face of the card, no need to rotate first */}
-  ( <div className = "cardScene">
-    <div className="cardFrontImgContainerNoRotation" key={memberArray[1]}>
-          <img className = "cardImg" src={memberArray[1]}></img>
-    </div>
-    </div>) 
-  : 
-  (<div className = "cardScene"> {/* either show the back of the card or show the face of card, rotating it first */}
-  <div className = {memberArray[2] ? "cardNoRotate" : "cardRotate"}>  {/* "cardNoRotate" = show back of card; "cardRotate" = show face, rotating first*/}
-        <div className="cardBackImgContainer" key={memberArray[1]}>
-          <img className = "cardImg" src={memberArray[0]}></img>
-        </div>
-        <div className="cardFrontImgContainer" key={memberArray[1]}>  {/* rotateY: 180º*/}
-          <img className = "cardImg" src={memberArray[1]}></img>
-        </div>
-   </div>
-   {/* end div className = "cardScene" follows*/}
-   </div>   )   
-))} 
- 
- 
+Tues 6 June 23:
+When the user has turned over the 52 card and the timer is still ticking
+if the user clicks Stop the start/stop button text should read "---" 
+and the button become inoperable but thtat doesn't happens. This is why
+(sort this out tomorrow):
+In <Timer/> line 278 shows that counter never reaches 52! This is because 
+somewhere the code reads counter and if it is 52 it resets it to 0! This
+means that line 290 never runs!
 
 
-<div className = {memberArray[2] ? "cardNoRotate" : "cardRotate"}>
-</div>
-className="cardImgContainer"
+                
 
-
-
-
-
-
-
-
-
-
-{/*
-Next card button triggers 
-two functions:
-a) <App/> function moveToDisplayDeck 
-this must 
-i) look at the counter value i
-ii) move the ith card in shuffledDeck to 
-the ith position in <App/> ref deckToDisplay
-
-b) <App/> function displayDeck
-this must:
-i) set the props of <CardContainer> that
-makes the cards appear
-*/}

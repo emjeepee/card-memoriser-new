@@ -184,7 +184,7 @@ This fn has to:
 6) Set the text of the Start/Stop button to "Start" and make the button inoperable
 */
 function resetTheTimer () {
-console.log(`resetTheTimer called`)
+//console.log(`resetTheTimer called`)
 // 1):
 stopTimer()
 

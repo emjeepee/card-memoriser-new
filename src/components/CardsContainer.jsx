@@ -235,7 +235,7 @@ export default function CardsContainer({
 
 // A lookup table object that function changeRectsAndDDMenus 
 // refers to. That function gets called by the click handlers
-// of the click handlers of the dd menus: 
+// of the dd menus: 
 const srcLookup = useRef({
 cAce: c1,
 c2: c2,
@@ -338,14 +338,14 @@ let cardsArray = [
 
 
 // An array containing 52 arrays, each representing
-// a card of a playing deck. This deck is not shuffled.
+// a card of an ordered (ie unshuffled) deck of cards.
 // In each member array below 
 // boc = the src of the image of the back of a card,
-// cj (for example) = the src of the card face,
-// 0 = a key, later to be to the index of the card in the array
+// c4 (for example) = the src of the face of the card,
+// 0 = a key, later set to the index of the card in the array
 // true at index [3] =  
 // true at index [4] =  
-// "cj" (for example) = a string representing the card
+// "c5" (for example) = a string representing the card
 let unshuffledDeck = [
     [boc, c1, 0, true, true, "c1"], 
     [boc, c2, 0, true, true, "c2"], 
@@ -402,9 +402,12 @@ let unshuffledDeck = [
                     ] 
     
 
-// Ref that contains data for 
-// the dropdown menu that will
-// show cards:
+// A ref that contains data that 
+// component <DropDownList/> will 
+// employ to show card values (ie 
+// 1 to Ace). 
+// The dropdown menu appears in the 
+// top left of a Recall card:
 const cardsOptionsList = useRef(
   [
     {src: null, text: "Ace"},
@@ -434,6 +437,11 @@ const suitsOptionsList   = useRef(
     {src: spade, text: "s"}
   ]
                                  )
+
+//----------------------------------------------------------
+
+
+
 
 //----------------------------------------------------------
 // The object that App passes to this component as 
@@ -523,7 +531,6 @@ timeTaken: "",
 // checkCards() to set ref timeDateTimeTaken.
 // Each arg is a string:
 function setTimeAndDate(time, date){
-  // console.log(`In setTimeDateTimeTaken`)
   timeDateTimeTaken.current.date = date
   timeDateTimeTaken.current.time = time
                                   }
@@ -533,7 +540,6 @@ function setTimeAndDate(time, date){
 // to <Timer/> to set ref timeDateTimeTaken.
 // The arg is a string:
 function setTimeTaken(timeTaken){
-  // console.log(`In setTimeTaken`)
   timeDateTimeTaken.current.timeTaken = timeTaken
                                 }
 
@@ -581,7 +587,6 @@ const [resetTimer, setResetTimer] = useState(0)
 
 // TESTING ONLY:
 useEffect(() => {
-  // console.log(`In useEffect of <CardsContainer/> and resetTimer has changed`)    
               }, [resetTimer]);
 
 
@@ -597,21 +602,22 @@ for (let i = 0; i < 52; i++) {
 return deepCopyArray(tempArray)                             
                           }
 
+//----------------------------------------------------------------------------
 
-
-// A ref that a function called by 
-// the click handlers of the dd menu
-// options call. 
+// A ref. A function in the click handlers
+// of the dd menu calls this ref: 
 const lookupTable = useRef(makeLookupTable())
 
 // A function to reset ref lookupTable.
 // The onClick handler for the Recall
-// button (recallCards) calls this function:
+// button (function recallCards) calls 
+// this function:
 function resetLookupTable(){
 lookupTable.current = makeLookupTable()
                            }
 
 
+//----------------------------------------------------------------------------
 
 
 // Stuff to do with the dropdown menus:
@@ -625,7 +631,7 @@ optionsObject looks like this:
     ddMenuPositionCSSclass: "ddMenuPositioningDivLeft" // css class, positions menu in rect
     textCSSclass: "dropdownMenuOptionText", // css class for the <p> of each option
     imgCSSclass: null,                      // css class for the img of an option
-    imageDivCSSclass: null,                 // css class for the div contianing the img
+    imageDivCSSclass: null,                 // css class for the div containing the img
     textDivCSSclass: "menuItemContainer",   // css class for the div containing the text
     imageAndTextDivCSSclass: null,          // css class for the div containing text+image    
     outerContainerCSSclass: "ddMenuOuterContainer", // css class for the div that grows/shrinks 
@@ -641,8 +647,8 @@ optionsObject looks like this:
 
 // Ref that contains info for the 
 // <DropDownMenu/>'s prop optionsObject
-// in the case of the cards dropdown
-// menu: 
+// in the case of the dropdown menu that
+// shows the 13 possible card values: 
 const cardsOptObj = useRef(
   {
     ddMenuPositionCSSclass: "ddMenuPositioningDivLeft",
@@ -661,13 +667,16 @@ const cardsOptObj = useRef(
                         )
 
 // A ref related to the one above:
-const copiedCardsOptObj = useRef()
+// const copiedCardsOptObj = useRef()
 
 
 // Ref that contains info for the 
 // <DropDownMenu/>'s prop optionsObject
-// in the case of the suits dropdown
-// menu: 
+// in the case of dropdown menu that 
+// shows the four possible suits.
+// This ref provides data for the 
+// "Suit" dropdown that appears above 
+// each recall card : 
 const suitsOptObj = useRef(
   { 
     ddMenuPositionCSSclass: "ddMenuPositioningDivRight",
@@ -687,11 +696,11 @@ const suitsOptObj = useRef(
   }
                         )
 
-
-// Ref that contains info for the 
-// <DropDownMenu/>'s prop optionsObject
-// in the case of the suits dropdown
-// menu: 
+// Code passes the following object 
+// into the <DropdownMenu/> that it
+// uses to make the dd menu that  
+// the user employs to show the tables
+// for card images for each suit: 
 const cardsAreaSuitsOptObj = useRef(
   { 
     ddMenuPositionCSSclass: "ddPositionDiv",
@@ -705,22 +714,75 @@ const cardsAreaSuitsOptObj = useRef(
     mainText: "Suit",
     mainTextCSSclass: "optionTextCSSclass", 
     mainTextContainerCSSclass: "menuHeaderContainer",
-    clickHandlerOne: showCardKeyMemImages,
-    clickHandlerTwo: null,
+    // clickHandlerOne: showCardKeyMemImages,
+    // clickHandlerOne: testHandler,
+    clickHandlerTwo: showCardKeyMemImages,
     clickHandlerThree: null
   }
                         )
 
+// A test handler:
+function testHandler(){
+console.log(`The test handler fired!`)
+                      }
 
 
+/**/
+
+//----------------------------------------------------
+
+// Use a function to make an array of 52 objects, 
+// each of which is identical to cardsOptObj 
+// (whose mainText property has value "Card"). 
+// Put this array in a ref.
+// Code must call this fn every time the user
+// clicks the Recall button.
+// When the user clicks the dd list for card 
+// value in the nth Recall card, click handler 
+// changeRectsAndDDMenus will change the value 
+// of the mainText property of the nth member 
+// object of the array in the ref to a string 
+// representing the card value the user has 
+// picked (eg "Q", for 'queen').
+// changeRectsAndDDMenus will then pass that
+// object member as a prop to the appropriate
+// <DropdownMenu/> as it recreates the recall
+// card and dd menus.  
+// A similar thing happens with suitsOptObj 
+// (whose mainText value is "Suit").
+const cardsOptObjectsArrayRef = useRef([])
+// let cardsOptObjectsArray
+
+function makeNewCardsOptObjectsArray(){
+  // cardsOptObjectsArray = []
+  cardsOptObjectsArrayRef.current =[]
+  // Make a new array:
+  for (let i = 0; i < 52; i++) {
+    cardsOptObjectsArrayRef.current.push({ ...cardsOptObj.current })
+    // cardsOptObjectsArray.push({ ...cardsOptObj.current })
+                               } // end for loop
+// Now reset the value of ref cardsOptObjectsArrayRef 
+// to the new array:
+// cardsOptObjectsArrayRef.current = cardsOptObjectsArray                                
+                                      } // end fn makeNewCardsOptObjectsArray
+
+
+const suitsOptObjectsArrayRef = useRef([])
+// let suitsOptObjectsArray
+
+function makeNewSuitsOptObjectsArray(){
+  // suitsOptObjectsArray = []
+  suitsOptObjectsArrayRef.current = []
+    for (let i = 0; i < 52; i++) {
+  // suitsOptObjectsArray.push({ ...suitsOptObj.current })
+  suitsOptObjectsArrayRef.current.push({ ...suitsOptObj.current })
+                                 } // end for loop
+  // suitsOptObjectsArrayRef.current = suitsOptObjectsArray                                 
+                                      } // end fn makeNewSuitsOptObjectsArray
 
 //----------------------------------------------------
 
 
-
-
-
-//----------------------------------------------------
 // A state property to hold an object that determines
 // properties of the <ButtonOne/> component that is
 // the Start/Stop button (a child of <Timer/>).
@@ -750,9 +812,6 @@ function makeStartStopButtonInoperable(){
                         )
                                         }
 
-
-
-
 //----------------------------------------------------
    
 // A state property that will contain an array whose members
@@ -772,7 +831,7 @@ const [stateDeckToDisplay, setStateDeckToDisplay] = useState([])
 // when whatToShowInGrid.current === 2 -> show the recall rects + dd menus and green ticks/red crosses
 const whatToShowInGrid = useRef(0)
 
-
+//----------------------------------------------------
 
 // A state property that will contain an array whose members
 // each comprise jsx that describes: a div containing two 
@@ -785,16 +844,25 @@ const whatToShowInGrid = useRef(0)
 // className="cardsContainer"):
 const [rectsAndDDMenus, setRectsAndDDMenus] = useState()
 
-// A ref that the click handlers for the dd menus 
-// on the backs of cards change. This holds an array that 
-// the click handler for the Recall button will 
-// put into state property rectsAndDDMenus, triggering
-// a rerender. The line below intialises this ref to
-// an array whose members each are jsx for a rect
-// that contains two dd menus and an image but the
-// image has no src:
+//----------------------------------------------------
+
+// A ref. The click handlers for the dd menus 
+// on the backs of Recall cards change the value 
+// of this ref, as does the handler for the Recall
+// button.
+// The click handler for the Recall button calls 
+// function makeRectsAndDDMenus(), which returns 
+// an array of 52 members, each the jsx for a Recall 
+// card. The handler also writes this array into
+// the ref below, replacing what was in there. The  
+// handler then puts the array into state property 
+// rectsAndDDMenus, triggering a rerender. The line 
+// below intialises this ref to an array whose 
+// members each are jsx for a rect that contains 
+// two dd menus and an image without and src:
 const recallCardsToDisplay = useRef(makeRectsAndDDMenus())
 
+//----------------------------------------------------
 
 // A function to put the array recallCardsToDisplay
 // into state property rectsAndDDMenus (thus 
@@ -810,9 +878,6 @@ function redrawRectsAndDDMenus(){
 
 //---------------------------------------------------------------------------
 
-
-
-//---------------------------------------------------------------------------
 
 // Code surrounding the Recall button
 //-----------------------------------
@@ -871,7 +936,7 @@ if (numberOfCardsMinusOne === 51 ) { // user has memorised all 52 cards
                                    } // end third if
                                               } // end displayModal()
 
-
+//----------------------------------------------------
 
 
 // The click handler for the Recall button.
@@ -879,8 +944,11 @@ if (numberOfCardsMinusOne === 51 ) { // user has memorised all 52 cards
 // 6) Put the blocking screen in front of <Timer/>, to 
 //    prevent the user from using the timer.
 // 5) Reset ref recallCardsToDisplay to an array of 52 members,
-//    each JSX representing a card back and the two dropdowns. 
-//    Here read the number of cards the user attempted and for 
+//    each member being JSX representing a card back and the two dropdowns.
+//    Also reset the value of property mainText of 
+//    i)   all 52 members of cardsOptObjectsArrayRef.current 
+//    ii)  and all 52 members of suitsOptObjectsArrayRef.current                                               
+//    Also read the number of cards the user attempted and for 
 //    the remaining cards add a black 0.7 opacity screen to make
 //    the remaining cards' dds unusable.
 //    Also reset ref lookupTable. 
@@ -904,6 +972,11 @@ if (numberOfCardsMinusOne === 51 ) { // user has memorised all 52 cards
 //    iii)  If 52 carry on 
 // 
 function recallCards(){
+// 5) i):
+makeNewCardsOptObjectsArray()
+// 5) ii):
+makeNewSuitsOptObjectsArray()
+
 // 6):
 setBlockScreen(true)   
 // 5):
@@ -942,6 +1015,7 @@ if (modalResult === "Whole deck") {
 
                       } // end recallCards
 
+//----------------------------------------------------
 
 // A function that responds to the click of the Cancel button
 // of the modal. This component passes this function in to 
@@ -955,6 +1029,7 @@ setBlockScreen(false)
   startTimerTrigger.current += 1
                                 }
 
+//----------------------------------------------------
 
 // A function that responds to the click of the OK button
 // of the modal. This component passes this function in to 
@@ -996,33 +1071,47 @@ function respondToModalOK() {
   // 5): 
   whatToShowInGrid.current = 2
   // 6):
+// Call the function that puts array recallCardsToDisplay
+// into state property rectsAndDDMenus (thus 
+// triggering a rerender):
   redrawRectsAndDDMenus()
                                   }
-  
-
-
-
   
 //---------------------------------------------------------------------------
 
 // A function to create the array that will go into state 
-// property rectsAndDDMenus. 
-// Each members will contain the same jsx, which will
-// describe a card, face down, with two dd menus superimposed 
-// on it. Additionally if the user has attempted to memorise 
-// the first n cards, where n < 52, the array members from 
-// n+1 to 52 (from indexes n to 51) will also include jsx for
-// a div of black background and opacity 0.7 that sits above
-// the jsx for the dds and the card back and prevents the user 
-// from using the dds:
+// property rectsAndDDMenus. The click handler for the Recall
+// button calls this function.
+// This function creates an array of 52 members, each being
+// the jsx for a recall card. 
+// This array becomes a child of <CardsContainer/>, which 
+// is a grid of 13 cols x 4 rows. Each recall card goes into
+// a position of the grid.
+// The click handler for the Recall button calls this function 
+// like this:
+// recallCardsToDisplay.current= makeRectsAndDDMenus()
+// Each member of the array is jsx for one of two things:
+// i)  the back of a card plus a card dropdown list at top 
+// left and a suit dropdown list at top right. The back of 
+// the card changes to the face once the user selects a card 
+// and a suit from the dd menus.
+// ii) the same as i) above but with a see-through black veil 
+// over it that prevents the user from using the dd menus. This 
+// is for the cards the user did not attempt to recall (so 
+// if the user turned over only 12 cards, then this array will 
+// 12 members like i) above and 40 like ii).
 function makeRectsAndDDMenus(){
+  // Mon12Feb24:
+  // The following line seems to show that this is working
+  // except when you hit Recall, when cardsOptObj.current.mainText
+  // remains as the previous card!
 let tempArray = []
 for (let i = 0; i < 52; i++) {
   tempArray.push(
     (
 <div className="containerForBackOfCard" key={i}> 
         {/* An overlay screen that blocks the 
-        the back of the card abd the dds for 
+        the back of the card and the dds for 
         cards (n+1) to 52, where the user has
         attempted to memorise n cards (n being 
         less than 52 and having value 
@@ -1032,7 +1121,7 @@ for (let i = 0; i < 52; i++) {
         {/*The back of a card: */}
         <img className="recallCard" src = {boc}/>
 
-        {/*The cards dropdown menu: */}
+        {/*The card values dropdown menu: */}
          <DropDownMenu 
          optionsList = {cardsOptionsList.current}
          optionsObject={cardsOptObj.current}
@@ -1054,34 +1143,44 @@ for (let i = 0; i < 52; i++) {
 return tempArray
                               }
 
-
 //---------------------------------------------------------------------------------------
 
 // The click handler for the options of the dd menus. 
-// This function changes array 
+// This function changes the array in ref 
 // recallCardsToDisplay.current so that instead of 
-// having 52 identical members that each contain 
-// jsx for a back of a card and the two dds, instead 
-// it will contain 52 members, each containing jsx that 
-// describes one of two things:
+// having members that are jsx for either 
+// i)  a card back and the two dds or 
+// ii) as i) above but with a dark overlay that prevents
+// the user from clicking the dd menus 
+// it will instead contain 52 members, each containing
+// jsx for one of the following three things:
 // i)   a card back and the two dds
-// ii)  a card front and the two dds. The card front
-//      corresponds to the user's selection from the
-//      dds. 
+// ii)  a card front and the two dds, the card front
+//      corresponding to the user's selection from the
+//      dds.
+// iii) as i) above but with a dark overlay that prevents
+// the user from clicking the dd menus.
 // This function must
 // 1) Set the image of the appropriate rect div in 
-// array recallCardsToDisplay according to the user's 
+// the array in ref recallCardsToDisplay according to the user's 
 // selection in the dd menus
 // 2) Set the text of the heads of the dd menus to what
-// the user selects. 
+// the user selects. In the case of the dd list in which 
+// the user selects a card value, the head of the dd list
+// will become, for example, k (for 'king'), 6, 10, etc.
+// In the case ofthe dd list for suits the head of the dd 
+// list will become 'c', 'd', 'h' or 's'
 // 3) set state property rectsAndDDMenus to the now changed
-// recallCardsToDisplay.
+// array in ref recallCardsToDisplay (to trigger a rerender).
 // 4) Save the name of the src in an indexed array that 
-// the Check button handler will read.
+// the Check button handler will read. Remember that the 
+// user clicks the Check button after he has set as many  
+// Recall cards as he was able to remember.
 // 5) Make the Check button operable if the user has selected 
-// both card and suit of at tleast one card.
-// Args card and suit are strings and cardNumber is an int.
-// Args card and suit are strings or null:
+// both card and suit of at least one card.
+// Args card and suit are strings (eg "J" (for jack) and 
+// "c" (for clubs)) or null. 
+// Arg cardNumber is an int.
 function changeRectsAndDDMenus(card, suit, cardNumber){
 // 1):
 // remember that lookupTable.current is an array that 
@@ -1091,18 +1190,43 @@ function changeRectsAndDDMenus(card, suit, cardNumber){
 //  {card: null, suit: null} 
 //  ... \50 more\  
 // ]
-// So the code below looks for the array member of 
-// index [cardNumber] and sets it card and suit properties
-// to a card string and a suit string, respectively.
+// So the code below looks for the member of the array 
+// above that has index [cardNumber] and sets its card
+// and suit properties to strings (eg "J" for jack and 
+// "c" for clubs). Then the code sets let joinedSRCstring 
+// to "cJ" and looks for the src at key cJ in the array 
+// in ref srcLookup.current. Then the code sets the src 
+// of the appropriate <img> to that src:
 
 let joinedSRCstring = null
 
+// If the dd is for card values:
 if (card) {
+// First change the value of the mainText
+// property of the object that code will 
+// later put into <DropdownMenu/> as prop 
+// optionsObject during the creation of 
+// the jsx for each dropdown for card value:
+cardsOptObjectsArrayRef.current[cardNumber].mainText = card
+// cardsOptObjectsArray[cardNumber].mainText = card // this line is wrong
   lookupTable.current[cardNumber].card = card // eg "J"
+// 2) Now set the headings of the dropdowns to match
+// what the user chose:
+// cardsOptObj.current.mainText = card
           }
 
 if (suit) {
+// First change the value of the mainText
+// property of the object that code will 
+// later put into <DropdownMenu/> as prop 
+// optionsObject during the creation of 
+// the jsx for each dropdown for card suit:
+suitsOptObjectsArrayRef.current[cardNumber].mainText = suit
   lookupTable.current[cardNumber].suit = suit // eg "c"
+// 2) Now set the headings of the dropdowns to match
+// what the user chose:
+
+// suitsOptObj.current.mainText = suit
           }
 
 // set joinedSRCstring to, eg, "cJ", for jack of clubs:
@@ -1110,8 +1234,15 @@ if (lookupTable.current[cardNumber].suit && lookupTable.current[cardNumber].card
   joinedSRCstring = lookupTable.current[cardNumber].suit.concat(
     lookupTable.current[cardNumber].card
                                                                ) // produces, eg, "cJ"
+
+
                                                                                   
-// 3):
+// 1):
+// Recreate the jsx only for the recall card 
+// in question and its dropdowns to reflect 
+// the user's choice of dd options.
+
+
   recallCardsToDisplay.current[cardNumber] =
   (
     <div className="recallCardIMGandDDmenusContainer" key={cardNumber}>
@@ -1119,18 +1250,18 @@ if (lookupTable.current[cardNumber].suit && lookupTable.current[cardNumber].card
     className="recallCard"
     src = {srcLookup.current[joinedSRCstring]}
     />
-    {/*The cards dropdown menu: */}
+    {/*Draw the cards dropdown menu: */}
    <DropDownMenu
    optionsList = {cardsOptionsList.current}
-   optionsObject= { cardsOptObj.current  } //
+   optionsObject = {cardsOptObjectsArrayRef.current[cardNumber]}
    dataVar = {cardNumber}
    type = "text"
    /> 
 
-    {/*The suits dropdown menu: */}
+    {/*Draw the suits dropdown menu: */}
    <DropDownMenu
    optionsList = {suitsOptionsList.current}
-   optionsObject= { suitsOptObj.current  }
+   optionsObject = {suitsOptObjectsArrayRef.current[cardNumber]}
    dataVar = {cardNumber}
    type = "image"
    /> 
@@ -1151,9 +1282,14 @@ if (checkButtInfo.buttonDivCSSclass === "mainButtonInoperable") {
                }
 
                                                                                 } // end if
-  redrawRectsAndDDMenus()
-                                                      }
 
+// Call the function that puts array recallCardsToDisplay
+// into state property rectsAndDDMenus (thus 
+// triggering a rerender):
+  redrawRectsAndDDMenus()
+                                                      } // end changeRectsAndDDMenus()
+
+//----------------------
 
 
 // Now a function that the Recall button's onClick handler 
@@ -1293,8 +1429,9 @@ const deckToDisplay = useRef();
 // a new shuffled deck and put it into the 
 // ref shuffledDeck.current.
 // The click handler for the New deck button 
+// (makeNewShuffledDeckAndShowCardBacks())
 // calls this function, which must:
-// 1) make new shuffled deck and
+// 1) make a new shuffled deck and
 //    store the new shuffled deck
 // 2) reset the counter to -1:
 function makeAndStoreNewShuffledDeck(){
@@ -1316,6 +1453,19 @@ for (let i = 0; i < 52; i++) {
                              }
                 }, []);
 
+//----------------------------------
+
+// a function to toast the contents of the 
+// ref that contains memorised cards.
+// Code calls this function in the click 
+// handler of the New deck button:
+function toastMemorisedCards(){
+  memorisedCards.current = []
+  for (let i = 0; i < 52; i++) {
+  memorisedCards.current.push({status: null, card: null, ordinal: i})
+                               }
+                              }
+//----------------------------------                             
 
 // A state property that will contain the 
 // array whose members comprise jsx for 
@@ -1564,6 +1714,8 @@ function makeTimeAndDateString(){
 // The click handler for the 
 // New deck button.
 // This function has to:
+// -1) Toast the ref containing the array of
+// memorised cards
 // 0) make the screen that clocks the <Timer/>
 //    go away
 // 1) make a new shuffled deck and 
@@ -1577,6 +1729,8 @@ function makeTimeAndDateString(){
 // deck. This will cause a rerender and show
 // the cards in the grid (above the green felt)
 function makeNewShuffledDeckAndShowCardBacks(){
+// -1):
+toastMemorisedCards()
 // 0): 
 setBlockScreen(false)
   // 1):
@@ -1751,8 +1905,7 @@ function showNextCard(){
 startTimerTrigger.current += 1 
   //2):
   incrementCounter()
-  // console.log(`In showNextCard and the counter has value ${nextCardCounter.current}`)
-  // 3):  
+    // 3):  
   changeDeckToDisplay()
   // 4):
     changeStateDeckToDisplay(shuffledDeck.current)
@@ -1807,11 +1960,13 @@ let myArray = shuffleArrayMembers(unshuffledDeck)
 // the New deck button calls. 
 // This function must:
 // 1) make an array each member of which 
-// is the jsx for a card, either the face 
-// or the back of the card
+// is the jsx for the back of a card. The user's
+// click of the Next card button will turn each
+// card in turn so that its face shows. 
 // 2) set stateDeckToDisplay to that array,
 // thus triggering a rerender.
-// Remember that xxxx:
+// Remember that arrayArg is an array containing the deck 
+// to display:
 
 function changeStateDeckToDisplay(arrayArg){
 setStateDeckToDisplay (
@@ -1834,7 +1989,7 @@ setStateDeckToDisplay (
             <img className = "cardImg" src={memberArray[0]}></img>
           </div>
           
-          <div className="cardFaceImgContainer" >  {/* card face is facing away from the user*/}  
+          <div className="cardFaceImgContainer" >  {/* card face is facing the user*/}  
             <img className = "cardImg" src={memberArray[1]}></img>
           </div>
      </div>
@@ -1875,7 +2030,7 @@ function makeRecallButtonOperable (){
 // 2) change the appropriate state property
 //    of <App/> to make the window show. Do
 //    this by calling a function of <App/>
-//    that this component has acess to via 
+//    that this component has access to via 
 //    context (function showImageTextsTable):
 function showCardKeyMemImages(argOne, textArg, argThree){ // 1)
 // 2) 
@@ -1996,13 +2151,24 @@ pText = {checkButtInfo.pText}
 
 </div>
 
+
+
+
 {/* The div containing the dd 
 the user selects from to show 
 a window that displays a table 
 that contains the texts for
-card key memory images: */}
+card key memory images: 
+Tues13Feb24: NOTE: the following code commented out because 
+clicking the dd menu options did very weird things:
+It would put several extra lines in the table!!!!
+
+*/}
+{/* The following commented out  
 <div className="cards-area-dd-container">
+*/}
 {/*The suits dropdown menu: */}
+{/* The following commented out  
 <p className="infoTextP">
   Info
 </p>
@@ -2010,9 +2176,11 @@ card key memory images: */}
          optionsList = {suitsOptionsList.current}
          optionsObject={cardsAreaSuitsOptObj.current}
          dataVar = {null}
-         type = "image"
+         type = "imageTexts"
 />
 </div>
+ */}
+
 
 
 

@@ -267,11 +267,10 @@ const spadesTextsObjectRef = useRef(
 
 
 // The onClick handler for the options of the
-// dd next to the Recall and Check buttons 
-// calls the following function.
+// info button calls the following function.
 // This function must:
 // 1) Get from localStorage the array that 
-// holds card texts and key image texts 
+// holds card texts and key-image texts 
 // for the suit in question -- 
 // if that object exists. If it does not 
 // this function will employ state variable
@@ -459,7 +458,7 @@ retrieveTexts(suit)
                                   } 
 
 
-// A function thta gets passed
+// A function that gets passed
 // to child <KeyImageText/>, which 
 // passes it to its child 
 // <KeyImageTextRow/>. This function takes

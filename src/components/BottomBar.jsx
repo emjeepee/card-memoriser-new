@@ -22,7 +22,6 @@ return (
 </div>
 
 <div className="bottomBarContainerTwo">{/* contains two <ButtonOne/>s */}
-
 </div>
 
 </div>
